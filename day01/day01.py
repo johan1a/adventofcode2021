@@ -15,3 +15,15 @@ while i < len(lines):
 print("Part 1:")
 print(increases)
 
+increases = 0
+i = 1
+while i < len(lines) - 2:
+    a = lines[i - 1] + lines[i] + lines[i + 1]
+    b = lines[i] + lines[i+1] + lines[i + 2]
+    increase = b - a
+    if (increase > 0):
+        increases+=1
+    i += 1
+
+print("Part 2:")
+print(increases)

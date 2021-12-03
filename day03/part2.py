@@ -8,7 +8,7 @@
 
 lines = []
 with open('input.txt', 'r') as file:
-    lines = file.readlines()
+    lines = [x.strip() for x in file.readlines()]
 
 n = len(lines)
 
@@ -33,26 +33,47 @@ def most_common_bits(nbrs):
     return counts
 
 nbrs = lines
-while len(nbrs) > 1:
+i = 0
+while len(nbrs) > 1 and i < len(lines[0]):
 
     temp_0 = []
 
     counts = most_common_bits(nbrs)
+    if counts[i] >= len(nbrs) / 2:
+        most_common = '1'
+    else:
+        most_common = '0'
+
+
     for nbr in nbrs:
-        i = 0
-        while i < len(nbr):
-            if counts[i] >= n / 2:
-                most_common = 1
-            else:
-                most_common = 0
+        if nbr[i] == most_common:
+            temp_0.append(nbr)
 
-            if nbr[i] == most_common:
-                temp_0 += nbr
-
-            i += 1
     nbrs = temp_0
+    i += 1
 
-temp_1 = []
-print(temp_0)
-# print("Part 1")
-# print(gamma_dec * epsilon_dec)
+oxygen = int(nbrs[0], 2)
+
+nbrs = lines
+i = 0
+while len(nbrs) > 1 and i < len(lines[0]):
+
+    temp_0 = []
+
+    counts = most_common_bits(nbrs)
+    if counts[i] >= len(nbrs) / 2:
+        most_common = '1'
+    else:
+        most_common = '0'
+
+
+    for nbr in nbrs:
+        if nbr[i] != most_common:
+            temp_0.append(nbr)
+
+    nbrs = temp_0
+    i += 1
+
+co2 = int(nbrs[0], 2)
+print("Part 2")
+print(oxygen * co2)

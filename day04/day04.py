@@ -36,12 +36,8 @@ def update(board, nbr):
 def has_won(board):
     marks = board['marks']
     rows = board['rows']
-    i = 0
-    while i < len(rows):
-        j = 0
-        if marks[i] == [True, True, True, True, True]:
-            return True
-        i += 1
+    if [True, True, True, True, True] in marks:
+        return True
     i = 0
     while i < len(rows):
         j = 0

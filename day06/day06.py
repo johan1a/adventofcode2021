@@ -11,10 +11,9 @@ def get_initial_nbrs(filename):
 
     return nbrs
 
-def part1(file):
+def run(file, part_nbr, n):
     nbrs = get_initial_nbrs(file)
     i = 0
-    n = 80
     while i < n:
         next_gen = defaultdict(lambda: 0)
         for nbr in nbrs:
@@ -27,8 +26,18 @@ def part1(file):
         nbrs = next_gen
         i +=1
     total = sum([nbrs[x] for x in nbrs])
-    print("Part 1 for {}: {}".format(file, total))
+    print("Part {} for {}: {}".format(part_nbr, file, total))
+
+
+def part1(file):
+    run(file, 1, 80)
+
+def part2(file):
+    run(file, 1, 256)
 
 part1('test.txt')
 part1('input.txt')
 print('')
+
+part2('test.txt')
+part2('input.txt')

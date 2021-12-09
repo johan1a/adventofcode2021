@@ -43,7 +43,7 @@ def part_of_basin(grid, point):
     x = point[1]
     xmax = len(grid[0]) - 1
     ymax = len(grid) - 1
-    return not (y < 0 or y > ymax or x < 0 or x > xmax or grid[y][x] == 9 or grid[y][x] == -1)
+    return not (y < 0 or y > ymax or x < 0 or x > xmax or grid[y][x] == 9)
 
 def part2(filename):
     grid = get_input(filename)
@@ -66,8 +66,6 @@ def part2(filename):
                 neighbors.append((py - 1, px))
                 neighbors.append((py, px + 1))
                 neighbors.append((py, px - 1))
-        print(len(seen))
-
         sizes.append(size)
 
     sizes = sorted(sizes)

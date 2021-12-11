@@ -10,9 +10,7 @@ def in_range(grid, y, x):
     ymax = len(grid) - 1
     xmax = len(grid[0]) - 1
     if y < 0 or y > ymax or x < 0 or x > xmax:
-        # print("{} {} in range : {}".format(y, x, False))
         return False
-    # print("{} {} in range : {}".format(y, x, True))
     return True
 
 def neighbors(grid, y0, x0):
@@ -33,9 +31,8 @@ def print_grid(grid):
         print('')
     print('')
 
-def part1(filename, max_steps = 100):
+def run(filename, max_steps=100, part2=False):
     levels = get_input(filename)
-    #print_grid(levels)
 
     flashes = 0
     octos = deque()
@@ -48,7 +45,6 @@ def part1(filename, max_steps = 100):
                 octos.append((y,x))
         while len(octos) > 0:
             y,x = octos.pop()
-            #print('x: {}, y: {}'.format(x,y))
             levels[y][x] += 1
 
             if levels[y][x] > 9 and not flashed[(y,x)]:
@@ -56,13 +52,26 @@ def part1(filename, max_steps = 100):
                 flashed[(y,x)] = True
 
                 for neighbor in neighbors(levels, y, x):
-                    # if neighbor == (2,2):
-                    #     print('appending neigh {} from {},{}'.format(neighbor, x, y))
                     octos.append(neighbor)
+
+        if part2 and len(flashed) == len(levels) * len(levels[0]):
+            print('Part 2 for {}: {}'.format(filename, step + 1))
+            break
         #print_grid(levels)
 
-    print('Part 1 for {}: {}'.format(filename, flashes))
+    if not part2:
+        print('Part 1 for {}: {}'.format(filename, flashes))
+
+def part1(filename, max_steps = 100):
+    run(filename, max_steps, part2=False)
+
+def part2(filename):
+    run(filename, 1000000, part2=True)
 
 part1('test1.txt', 2)
 part1('test.txt', 100)
 part1('input.txt', 100)
+
+print('')
+part2('test.txt')
+part2('input.txt')

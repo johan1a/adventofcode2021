@@ -51,19 +51,16 @@ def part1(filename):
     while len(stack) > 0:
         node = stack.pop()
 
-        #print(node)
         if node["name"] == "end":
             total += 1
-            #print_path(node)
 
         for neigh in neighs[node["name"]]:
             if can_visit(node, neigh):
                 if neigh == "start":
                     print(can_visit(node, neigh))
-              #  print("Adding neigh: " + neigh)
                 stack.append({"name": neigh, "prev": node})
 
-    print("Part 1 for {}: {}".format(filename, total))
+    return total
 
 def can_visit2(node_from, name_to):
     if not is_lower(name_to):
@@ -101,21 +98,20 @@ def part2(filename):
 
         if node["name"] == "end":
             total += 1
-            #print_path(node)
         else:
             for neigh in neighs[node["name"]]:
                 if neigh != "start" and can_visit2(node, neigh):
                     stack.append({"name": neigh, "prev": node})
 
-    print("Part 2 for {}: {}".format(filename, total))
+    return total
 
-part1("test1.txt")
-part1("test2.txt")
-part1("test3.txt")
-part1("input.txt")
+assert part1("test1.txt") == 10
+assert part1("test2.txt") == 19
+assert part1("test3.txt") == 226
+print("Part 1: {}".format(part1("input.txt")))
 print("")
 
-part2("test1.txt")
-part2("test2.txt")
-part2("test3.txt")
-part2("input.txt")
+assert part2("test1.txt") == 36
+assert part2("test2.txt") == 103
+assert part2("test3.txt") == 3509
+print("Part 2: {}".format(part2("input.txt")))

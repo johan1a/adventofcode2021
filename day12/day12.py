@@ -52,45 +52,45 @@ def part1(filename):
 
     return total
 
-def can_visit2(node_from, name_to):
+def can_visit2(nbr_visits, has_two, node, name_to):
     if name_to.isupper():
         return True
 
-    counts = defaultdict(lambda: 0)
-    counts[name_to] = 1
-
-    node = node_from
-    while node != None:
-        if node["name"].islower():
-            counts[node["name"]] += 1
-        node = node["prev"]
-
-    has_twice = False
-    for key in counts:
-        if counts[key] > 2:
-            return False
-        if counts[key] == 2:
-            if has_twice:
-                return False
-            has_twice = True
-    return True
+    return has_two == None or nbr_visits[name_to] < 2
 
 def part2(filename):
     neighs = get_input(filename)
 
     stack = deque()
     stack.append({"name": "start", "prev": None})
+    nbr_visits = defaultdict(lambda: 0)
+    has_two = None
     total = 0
 
     while len(stack) > 0:
         node = stack.pop()
 
-        if node["name"] == "end":
-            total += 1
+        name = node["name"]
+        if "unvisit" in node:
+            nbr_visits[name] -= 1
+            if has_two == name:
+                has_two = None
         else:
-            for neigh in neighs[node["name"]]:
-                if neigh != "start" and can_visit2(node, neigh):
-                    stack.append({"name": neigh, "prev": node})
+            if node["name"] == "end":
+                total += 1
+            else:
+                if name.islower():
+                    if nbr_visits[name] == 1:
+                        if has_two == None:
+                            has_two = name
+                        else:
+                            continue
+                    nbr_visits[name] += 1
+                    stack.append({"unvisit": True, "name": name})
+
+                for neigh in neighs[name]:
+                    if neigh != "start" and can_visit2(nbr_visits, has_two, node, neigh):
+                        stack.append({"name": neigh, "prev": node})
 
     return total
 
@@ -107,4 +107,4 @@ assert part2("test2.txt") == 103
 assert part2("test3.txt") == 3509
 result2 = part2("input.txt")
 assert result2 == 122880
-print("Part 2: {}".format(part2("input.txt")))
+print("Part 2: {}".format(result2))

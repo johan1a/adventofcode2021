@@ -11,15 +11,8 @@ def get_input(filename):
         neighs[split[1]].add(split[0])
     return neighs
 
-def is_lower(s):
-    lower = [c >= 'a' and c <= 'z' for c in s]
-    for l in lower:
-        if not l:
-            return False
-    return True
-
 def can_visit(node_from, name_to):
-    if not is_lower(name_to):
+    if name_to.isupper():
         return True
 
     node = node_from
@@ -43,7 +36,6 @@ def print_path(node):
 def part1(filename):
     neighs = get_input(filename)
 
-    visited = set()
     stack = deque()
     stack.append({"name": "start", "prev": None})
     total = 0
@@ -56,14 +48,12 @@ def part1(filename):
 
         for neigh in neighs[node["name"]]:
             if can_visit(node, neigh):
-                if neigh == "start":
-                    print(can_visit(node, neigh))
                 stack.append({"name": neigh, "prev": node})
 
     return total
 
 def can_visit2(node_from, name_to):
-    if not is_lower(name_to):
+    if name_to.isupper():
         return True
 
     counts = defaultdict(lambda: 0)
@@ -71,7 +61,7 @@ def can_visit2(node_from, name_to):
 
     node = node_from
     while node != None:
-        if is_lower(node["name"]):
+        if node["name"].islower():
             counts[node["name"]] += 1
         node = node["prev"]
 
@@ -88,7 +78,6 @@ def can_visit2(node_from, name_to):
 def part2(filename):
     neighs = get_input(filename)
 
-    visited = set()
     stack = deque()
     stack.append({"name": "start", "prev": None})
     total = 0
@@ -108,10 +97,14 @@ def part2(filename):
 assert part1("test1.txt") == 10
 assert part1("test2.txt") == 19
 assert part1("test3.txt") == 226
-print("Part 1: {}".format(part1("input.txt")))
+result1 = part1("input.txt")
+assert result1 == 3510
+print("Part 1: {}".format(result1))
 print("")
 
 assert part2("test1.txt") == 36
 assert part2("test2.txt") == 103
 assert part2("test3.txt") == 3509
+result2 = part2("input.txt")
+assert result2 == 122880
 print("Part 2: {}".format(part2("input.txt")))

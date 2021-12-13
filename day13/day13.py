@@ -49,10 +49,41 @@ def part1(filename):
 
     return len(coords)
 
-#print(part1("test.txt"))
+def part2(filename):
+    coords, folds = get_input(filename)
+
+    for fold in folds:
+        coords = do_fold(coords, fold)
+
+    endx = None
+    endy = None
+    i = -1
+    while endx == None:
+        if "x" in folds[i]:
+            endx = folds[i]["x"]
+            break
+        i -= 1
+    i = -1
+    while endy == None:
+        if "y" in folds[i]:
+            endy = folds[i]["y"]
+            break
+        i -= 1
+
+    for y in range(0, endy):
+        for x in range(0, endx):
+            if (x, y) in coords:
+                print("#", end="")
+            else:
+                print(".", end="")
+        print("")
+
+    return len(coords)
+
 assert part1("test.txt") == 17
 result1 = part1("input.txt")
-#assert result1 == 3510
 print("Part 1: {}".format(result1))
 print("")
 
+print("Part 2:")
+part2("input.txt")

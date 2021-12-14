@@ -16,7 +16,7 @@ def get_input(filename):
 
     return counts, rules
 
-def part1(filename):
+def run(filename, n):
     pair_counts, rules = get_input(filename)
     element_counts = defaultdict(lambda: 0)
 
@@ -27,7 +27,6 @@ def part1(filename):
         element_counts[c1] += 1
 
 
-    n = 40
     for i in range(0, n):
         diffs = defaultdict(lambda: 0)
         for rule in rules:
@@ -43,17 +42,21 @@ def part1(filename):
         for diff in diffs:
             pair_counts[diff] += diffs[diff]
 
-    print(element_counts)
     values = sorted(element_counts.values())
     return values[-1] - values[0]
 
+def part1(filename):
+    return run(filename, 10)
 
-#part1("test.txt") == 17
-print(part1("test.txt"))
-print(part1("input.txt"))
-# result1 = part1("input.txt")
-# print("Part 1: {}".format(result1))
-# print("")
+def part2(filename):
+    return run(filename, 40)
 
-# print("Part 2:")
-# part2("input.txt")
+assert part1("test.txt") == 1588
+result1 = part1("input.txt")
+assert result1 == 3411
+print("Part 1: {}".format(result1))
+print("")
+
+result2 = part2("input.txt")
+assert result2 == 7477815755570
+print("Part 2: {}".format(result2))

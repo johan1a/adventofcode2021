@@ -27,7 +27,7 @@ def part1(filename):
         element_counts[c1] += 1
 
 
-    n = 10
+    n = 40
     for i in range(0, n):
         diffs = defaultdict(lambda: 0)
         for rule in rules:

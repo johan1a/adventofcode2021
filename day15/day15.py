@@ -1,11 +1,14 @@
 from collections import defaultdict, deque
+from queue import PriorityQueue
 import sys, math
+
 
 def get_input(filename):
     lines = []
     with open(filename, "r") as file:
         lines = [[int(k) for k in l.strip()] for l in file.readlines()]
     return lines
+
 
 def in_range(grid, x, y):
     ymax = len(grid) - 1
@@ -14,37 +17,17 @@ def in_range(grid, x, y):
         return False
     return True
 
+
 def neighbors(grid, node):
     x0 = node[0]
     y0 = node[1]
     result = [
-            (x0 + 1, y0),
-            (x0 - 1, y0),
-            (x0, y0 + 1),
-            (x0, y0 - 1),
-            ]
+        (x0 + 1, y0),
+        (x0 - 1, y0),
+        (x0, y0 + 1),
+        (x0, y0 - 1),
+    ]
     return [n for n in result if in_range(grid, n[0], n[1])]
-
-def mindist(dists, nodes):
-    return sorted(nodes, key=lambda k: dists[k])[0]
-
-def print_path(grid, parents, end):
-
-    parent = parents[end]
-    path = []
-    while parent != None:
-        path.append(parent)
-        if parent in parents:
-            parent = parents[parent]
-        else:
-            parent = None
-    for y in range(0, end[1]):
-        for x in range(0, end[0]):
-            if (x,y) in path:
-                print('x', end="")
-            else:
-                print(grid[y][x], end="")
-        print()
 
 
 def part1(filename):
@@ -53,23 +36,23 @@ def part1(filename):
     parents = defaultdict()
     dists = defaultdict(lambda: 10000000)
     visited = set()
-    tovisit = set()
-    tovisit.add((0,0))
-    dists[(0,0)] = 0
+    tovisit = PriorityQueue()
+    tovisit.put((0, (0, 0)))
+    dists[(0, 0)] = 0
 
-    while len(tovisit) > 0:
-        node = mindist(dists, tovisit)
-        tovisit.remove(node)
+    while not tovisit.empty():
+        (dist, node) = tovisit.get()
         visited.add(node)
 
         for neighbor in neighbors(grid, node):
-            nextdist = dists[node] + grid[neighbor[0]][neighbor[1]]
+            nextdist = dist + grid[neighbor[0]][neighbor[1]]
             if neighbor not in visited and dists[neighbor] > nextdist:
                 dists[neighbor] = nextdist
-                tovisit.add(neighbor)
+                tovisit.put((nextdist, neighbor))
                 parents[neighbor] = node
     end = (len(grid) - 1, len(grid[0]) - 1)
     return dists[end]
+
 
 def in_range2(grid, x, y):
     ymax = 5 * len(grid) - 1
@@ -78,16 +61,18 @@ def in_range2(grid, x, y):
         return False
     return True
 
+
 def neighbors2(grid, node):
     x0 = node[0]
     y0 = node[1]
     result = [
-            (x0 + 1, y0),
-            (x0 - 1, y0),
-            (x0, y0 + 1),
-            (x0, y0 - 1),
-            ]
+        (x0 + 1, y0),
+        (x0 - 1, y0),
+        (x0, y0 + 1),
+        (x0, y0 - 1),
+    ]
     return [n for n in result if in_range2(grid, n[0], n[1])]
+
 
 def get_val(grid, node):
     xsize = len(grid[0])
@@ -102,50 +87,30 @@ def get_val(grid, node):
     result += wraparounds
     return result
 
-def print_path2(grid, parents, end):
-    if end in parents:
-        parent = parents[end]
-    else:
-        parent = None
-    path = []
-    while parent != None:
-        path.append(parent)
-        if parent in parents:
-            parent = parents[parent]
-        else:
-            parent = None
-    for y in range(0, end[1] + 1):
-        for x in range(0, end[0] + 1):
-            if (x,y) in path:
-                print('x', end="")
-            else:
-                print(get_val(grid, (x,y)), end="")
-        print()
-    print()
 
 def part2(filename):
     grid = get_input(filename)
 
     dists = defaultdict(lambda: 10000000)
     visited = set()
-    tovisit = set()
+    tovisit = PriorityQueue()
 
-    tovisit.add((0,0))
-    dists[(0,0)] = 0
+    dists[(0, 0)] = 0
+    tovisit.put((0, (0, 0)))
 
-    while len(tovisit) > 0:
-        node = mindist(dists, tovisit)
-        tovisit.remove(node)
+    while not tovisit.empty():
+        (dist, node) = tovisit.get()
         visited.add(node)
 
         for neighbor in neighbors2(grid, node):
-            nextdist = dists[node] + get_val(grid, neighbor)
+            nextdist = dist + get_val(grid, neighbor)
             if neighbor not in visited and dists[neighbor] > nextdist:
                 dists[neighbor] = nextdist
-                tovisit.add(neighbor)
+                tovisit.put((nextdist, neighbor))
 
     end = (5 * len(grid) - 1, 5 * len(grid[0]) - 1)
     return dists[end]
+
 
 assert part1("test.txt") == 40
 result1 = part1("input.txt")
@@ -156,4 +121,4 @@ print("")
 assert part2("test.txt") == 315
 result2 = part2("input.txt")
 assert result2 == 2948
-print(result2)
+print("Part 2: {}".format(result2))

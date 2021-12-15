@@ -69,7 +69,6 @@ def part1(filename):
                 tovisit.add(neighbor)
                 parents[neighbor] = node
     end = (len(grid) - 1, len(grid[0]) - 1)
-    #print_path(grid, parents, end)
     return dists[end]
 
 def in_range2(grid, x, y):
@@ -101,13 +100,6 @@ def get_val(grid, node):
     result = (grid[y][x] + extra) % 10
     wraparounds = math.floor((grid[y][x] + extra) / 10)
     result += wraparounds
-    if result > 9 or result < 1:
-        print("invalid val: " + str(result))
-        exit(1)
-
-    #if node[0] == 44 and node[1] == 0:
-        #print("xextra: {}, yextra: {}".format(xextra, yextra))
-
     return result
 
 def print_path2(grid, parents, end):
@@ -129,25 +121,14 @@ def print_path2(grid, parents, end):
             else:
                 print(get_val(grid, (x,y)), end="")
         print()
-
-    for x in range(0, 5):
-        xx = len(grid[0]) * x + 4
-        yy = 0
-        # 44,0
-        print([xx, yy])
-        print(get_val(grid, (xx, yy)), end=" ")
     print()
 
 def part2(filename):
     grid = get_input(filename)
 
-    #parents = defaultdict()
     dists = defaultdict(lambda: 10000000)
     visited = set()
     tovisit = set()
-
-    end = (5 * len(grid) - 1, 5 * len(grid[0]) - 1)
-    #print_path2(grid, parents, end)
 
     tovisit.add((0,0))
     dists[(0,0)] = 0
@@ -162,11 +143,8 @@ def part2(filename):
             if neighbor not in visited and dists[neighbor] > nextdist:
                 dists[neighbor] = nextdist
                 tovisit.add(neighbor)
-                #parents[neighbor] = node
-    #print_path2(grid, parents, end)
-    #print(end)
 
-
+    end = (5 * len(grid) - 1, 5 * len(grid[0]) - 1)
     return dists[end]
 
 assert part1("test.txt") == 40
@@ -175,8 +153,7 @@ assert result1 == 714
 print("Part 1: {}".format(result1))
 print("")
 
-print(part2("test.txt"))
-print(part2("input.txt"))
-# result2 = part2("input.txt")
-# assert result2 == 7477815755570
-# print("Part 2: {}".format(result2))
+assert part2("test.txt") == 315
+result2 = part2("input.txt")
+assert result2 == 2948
+print(result2)

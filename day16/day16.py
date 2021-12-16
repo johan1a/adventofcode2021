@@ -55,7 +55,7 @@ nbr_args = {
     type_gt: 2,
     type_lt: 2,
     type_eq: 2
-        }
+}
 
 length_type_bits = ["0"]
 length_type_packets = ["1"]
@@ -109,6 +109,7 @@ def parse_packets(chars, pos):
 
     return version_total
 
+
 def calculate(element):
     if type(element) == type(1):
         return element
@@ -143,22 +144,23 @@ def calculate(element):
             return 1
         return 0
 
+
 def should_pop(node, pos):
     if node['length_type'] == 'packets':
         read_packets = len(node['vals'])
         if read_packets == node['nbr_packets']:
             return True
         elif read_packets > node['nbr_packets']:
-            #chrs, x = get_bits(chars, 0, pos)
             print("packets error", read_packets, node['nbr_packets'], node)
             sys.exit(1)
     elif node['length_type'] == 'bits':
-            read_bits = pos - node['sub_pos']
-            if read_bits == node['nbr_bits']:
-                return True
-            elif read_bits > node['nbr_bits']:
-                print("bits error")
-                sys.exit(1)
+        read_bits = pos - node['sub_pos']
+        if read_bits == node['nbr_bits']:
+            return True
+        elif read_bits > node['nbr_bits']:
+            print("bits error")
+            sys.exit(1)
+
 
 def parse_packets2(chars, pos):
     max_bit_length = len(chars * 4)
@@ -183,13 +185,14 @@ def parse_packets2(chars, pos):
             number = int(str("".join(number_temp)), 2)
             stack[-1]['vals'].append(int(str("".join(number_temp)), 2))
         else:
-            node = {'op': opcodes[tuple(type_id)],
+            node = {
+                'op': opcodes[tuple(type_id)],
                 'vals': [],
                 'start_pos': start_pos,
                 'sub_pos': -1,
                 'nbr_packets': -1,
                 'nbr_bits': -1
-                }
+            }
             if len(stack) > 0:
                 stack[-1]['vals'].append(node)
             stack.append(node)
@@ -207,10 +210,9 @@ def parse_packets2(chars, pos):
         while len(stack) > 1 and should_pop(stack[-1], pos):
             stack.pop()
 
-    while(len(stack) > 1):
+    while (len(stack) > 1):
         stack.pop()
 
-    #print(stack[-1])
     return calculate(stack.pop())
 
 
@@ -234,7 +236,8 @@ assert part1("test2.txt") == 16
 assert part1("test3.txt") == 12
 assert part1("test4.txt") == 23
 assert part1("test5.txt") == 31
-#print(part1("input.txt"))
+result1 = part1("input.txt")
+print("Part 1: {}".format(result1))
 
 assert part2("test6.txt") == 3
 assert part2("test7.txt") == 54
@@ -244,19 +247,5 @@ assert part2("test10.txt") == 1
 assert part2("test11.txt") == 0
 assert part2("test12.txt") == 0
 assert part2("test13.txt") == 1
-print(part2("input.txt"))
-
-##
-#print(part2("input.txt"))
-
-# 0,23,34
-# assert part1("test.txt") == 40
-# result1 = part1("input.txt")
-# assert result1 == 714
-# print("Part 1: {}".format(result1))
-# print("")
-
-# assert part2("test.txt") == 315
-# result2 = part2("input.txt")
-# assert result2 == 2948
-# print("Part 2: {}".format(result2))
+result2 = part2("input.txt")
+print("Part 2: {}".format(result2))

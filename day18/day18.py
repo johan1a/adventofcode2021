@@ -61,21 +61,15 @@ def add_to_left(node, val):
         node = parent
         if numeric(node['left']):
             node['left']['val'] += val
-            if node['left']['val'] >= 10:
-                changed = True
         else:
             node = parent['left']
             while not numeric(node['right']):
                 node = node['right']
             node['right']['val'] += val
-            if node['right']['val'] >= 10:
-                changed = True
-    return changed
 
 
 def add_to_right(node, val):
     parent = node['parent']
-    changed = True
     while parent != None and not numeric(
             parent['right']) and parent['right']['id'] == node['id']:
         node = parent
@@ -84,16 +78,11 @@ def add_to_right(node, val):
         node = parent
         if numeric(node['right']):
             node['right']['val'] += val
-            if node['right']['val'] >= 10:
-                changed = True
         else:
             node = parent['right']
             while not numeric(node['left']):
                 node = node['left']
             node['left']['val'] += val
-            if node['left']['val'] >= 10:
-                changed = True
-    return changed
 
 
 def to_string(node):
@@ -131,7 +120,7 @@ def explode(node, depth=0):
     return node, changed_right
 
 
-def split(node, depth=0):
+def split(node):
     if numeric(node):
         return node, False
 
@@ -149,7 +138,7 @@ def split(node, depth=0):
         }
         return node, True
     else:
-        node['left'], changed_left = split(node['left'], depth + 1)
+        node['left'], changed_left = split(node['left'])
         if changed_left:
             return node, True
 
@@ -167,7 +156,7 @@ def split(node, depth=0):
         }
         return node, True
     else:
-        node['right'], changed_right = split(node['right'], depth + 1)
+        node['right'], changed_right = split(node['right'])
         if changed_right:
             return node, True
 
@@ -189,6 +178,7 @@ def expand(root):
             _, changed = split(root)
     return root
 
+
 def add(numbers):
     root = None
     for number in numbers:
@@ -205,10 +195,12 @@ def add(numbers):
 
     return magnitude(root)
 
+
 def part1(filename):
     numbers = get_input(filename)
 
     return add(numbers)
+
 
 def part2(filename):
     numbers = get_input(filename)
@@ -225,7 +217,6 @@ def part2(filename):
     return highest
 
 
-
 assert part1("test0.txt") == 445
 assert part1("test1.txt") == 791
 assert part1("test2.txt") == 1137
@@ -234,7 +225,6 @@ assert to_string(expand(parse("[[[[[9,8],1],2],3],4]")[0])) == "[[[[0,9],2],3],4
 assert to_string(expand(parse("[7,[6,[5,[4,[3,2]]]]]")[0])) == "[7,[6,[5,[7,0]]]]"
 assert to_string(expand(parse("[[6,[5,[4,[3,2]]]],1]")[0])) == "[[6,[5,[7,0]]],3]"
 assert to_string(expand(parse("[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]")[0])) == "[[3,[2,[8,0]]],[9,[5,[7,0]]]]"
-
 
 assert part1("test3.txt") == 3488
 assert part1("test5.txt") == 4140

@@ -189,10 +189,7 @@ def expand(root):
             _, changed = split(root)
     return root
 
-def part1(filename):
-    print(filename)
-    numbers = get_input(filename)
-
+def add(numbers):
     root = None
     for number in numbers:
         new, _ = parse(number)
@@ -208,6 +205,26 @@ def part1(filename):
 
     return magnitude(root)
 
+def part1(filename):
+    numbers = get_input(filename)
+
+    return add(numbers)
+
+def part2(filename):
+    numbers = get_input(filename)
+
+    highest = 0
+
+    for i in range(0, len(numbers)):
+        for j in range(0, len(numbers)):
+            if i == j:
+                continue
+            val = add([numbers[i], numbers[j]])
+            highest = max(highest, val)
+
+    return highest
+
+
 
 assert part1("test0.txt") == 445
 assert part1("test1.txt") == 791
@@ -216,17 +233,17 @@ assert part1("test4.txt") == 1384
 assert to_string(expand(parse("[[[[[9,8],1],2],3],4]")[0])) == "[[[[0,9],2],3],4]"
 assert to_string(expand(parse("[7,[6,[5,[4,[3,2]]]]]")[0])) == "[7,[6,[5,[7,0]]]]"
 assert to_string(expand(parse("[[6,[5,[4,[3,2]]]],1]")[0])) == "[[6,[5,[7,0]]],3]"
-#[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]] becomes [[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]] (the pair [3,2] is unaffected because the pair [7,3] is further to the left; [3,2] would explode on the next action).
 assert to_string(expand(parse("[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]")[0])) == "[[3,[2,[8,0]]],[9,[5,[7,0]]]]"
 
 
 assert part1("test3.txt") == 3488
+assert part1("test5.txt") == 4140
 
 result1 = part1("input.txt")
 assert result1 == 4184
 print("Part 1: {}".format(result1))
 
-# assert part2("test.txt") == 112
-# result2 = part2("input.txt")
-# assert result2 == 3618
-# print("Part 2: {}".format(result2))
+assert part2("test6.txt") == 3993
+result2 = part2("input.txt")
+assert result2 == 4731
+print("Part 2: {}".format(result2))

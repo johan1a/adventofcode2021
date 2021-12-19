@@ -99,6 +99,7 @@ def check_overlap(canonical_beacons, scanner, nbr_required):
 
                 if matching >= nbr_required:
                     canonical_beacons.update(all_translated)
+                    scanner['offset'] = offset
                     return True
 
 
@@ -114,25 +115,30 @@ def part1(filename, nbr_required=12):
         scanner = scanners[i]
         if scanner['id'] not in added:
             if check_overlap(canonical_beacons, scanner, nbr_required):
-                print("added", scanner['id'], len(added), "/", len(scanners))
                 added.add(scanner['id'])
+                print("added", scanner['id'], len(added), "/", len(scanners))
 
         i = (i + 1) % len(scanners)
 
-    return len(canonical_beacons)
+    scanners[0]['offset'] = (0, 0, 0)
+
+    max_dist = 0
+    for scanner0 in scanners:
+        for scanner1 in scanners:
+            offset0 = scanner0['offset']
+            offset1 = scanner1['offset']
+            dist = abs(offset0[0] - offset1[0]) + abs(
+                offset0[1] - offset1[1]) + abs(offset0[2] - offset1[2])
+            if dist > max_dist:
+                max_dist = dist
+
+    return len(canonical_beacons), max_dist
 
 
-# pp.pprint(len(rotate((-1, -1, 1))))
-# pp.pprint(len(rotate((5, 6, 4))))
-#print(part1('mini.txt', 3))
-#print(part1('test.txt', 12))
-print(part1('input.txt', 12))
-
-# result1 = part1("input.txt")
-# assert result1 == 4184
-# print("Part 1: {}".format(result1))
-
-# assert part2("test6.txt") == 3993
-# result2 = part2("input.txt")
-# assert result2 == 4731
-# print("Part 2: {}".format(result2))
+test_part1, test_part2 = part1("test.txt")
+assert test_part1 == 79
+assert test_part2 == 3621
+result1, result2 = part1("input.txt")
+assert result1 == 472
+print("Part 1: {}".format(result1))
+print("Part 2: {}".format(result2))

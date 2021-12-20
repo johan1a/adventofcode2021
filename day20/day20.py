@@ -46,8 +46,6 @@ def enhance(enhancement, input_image, xmin, ymin, xmax, ymax):
     for x in range(xmin-border, xmax+ 1+ border):
       num = get_image_number(input_image, x, y)
       output_pixel = enhancement[num]
-      if y == -1 and x == -1:
-        print('num',num, x,y, 'output_pixel',output_pixel)
       output_image[y][x] = output_pixel
 
       next_xmin = min(next_xmin, x)
@@ -64,22 +62,19 @@ def print_image(output_image, xmin, ymin, xmax, ymax):
     print()
   print()
 
-
-def part1(filename):
+def run(filename, n):
   enhancement, input_image, xmin, ymin, xmax, ymax = get_input(filename)
-  #print(xmin, ymin, xmax, ymax)
-  #print_image(input_image, xmin, ymin, xmax, ymax)
   image = input_image
-  n = 2
   for i in range(0,n):
+    if i % 10 == 0:
+      print(i)
     image, xmin, ymin, xmax, ymax = enhance(enhancement, image, xmin, ymin, xmax, ymax)
     xmin += border
     ymin += border
     xmax -= border
     ymax -= border
-    print(xmin, ymin, xmax, ymax)
-    print_image(image, xmin, ymin, xmax, ymax)
-
+  #print(xmin, ymin, xmax, ymax)
+  #print_image(image, xmin, ymin, xmax, ymax)
 
   total = 0
   for row in image:
@@ -89,8 +84,17 @@ def part1(filename):
 
   return total
 
-print(part1('input.txt'))
-#print(part1('test.txt'))
+def part1(filename):
+  return run(filename, 2)
+
+def part2(filename):
+  return run(filename, 50)
+
+#assert part1('test.txt') == 35
+
 # result1 = part1("input.txt")
-# assert result1 == 472
+# assert result1 == 5419
 # print("Part 1: {}".format(result1))
+
+#assert part2('test.txt') == 3351
+print(part2('input.txt'))

@@ -87,16 +87,11 @@ def part2(filename):
 
 
 assert part1("test.txt") == 739785
-assert part1("input.txt") == 1073709
+result1 = part1("input.txt")
+assert result1 == 1073709
+print("Part 1: {}".format(result1))
 
-print(part2("test.txt"))
-print(part2("input.txt"))
-
-# result1 = part1("input.txt")
-# assert result1 == 5419
-# print("Part 1: {}".format(result1))
-
-# assert part2('test.txt') == 3351
-# result2 = part2("input.txt")
-# assert result2 == 17325
-# print("Part 2: {}".format(result2))
+assert part2('test.txt') == 444356092776315
+result2 = part2("input.txt")
+assert result2 == 148747830493442
+print("Part 2: {}".format(result2))

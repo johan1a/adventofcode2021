@@ -62,7 +62,7 @@ def play(positions, scores, current_player):
         [3, 8],
         [1, 9],
     ]
-    round_wins = [0,0]
+    round_wins = [0, 0]
     for factor, step in steps:
         original_pos = positions[current_player]
         new_pos = (original_pos + step) % 10
@@ -80,12 +80,9 @@ def play(positions, scores, current_player):
     return round_wins
 
 
-
 def part2(filename):
-    wins = {}
     positions = get_input(filename)
     result = play(positions, [0, 0], 0)
-    print(wins, result)
     return max(result)
 
 

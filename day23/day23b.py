@@ -163,48 +163,30 @@ def above_in_the_way(rooms, aux, r0, r1):
 
 
 def can_move_to_aux(rooms, aux, r0, r1, aux_i):
-    debug = 'interactive' in rooms and rooms[r0][r1] == 'C' and r0 == 1 and r1 == 0 and aux_i == 3
-    if debug:
-        print("can_move_to_aux?")
-        sys.stdin.readline()
-
     if aux[aux_i] != None:
-        if debug:
-            print("0")
-            sys.stdin.readline()
         return False
 
     shell = rooms[r0][r1]
 
     if below_in_correct_room(rooms, aux, r0, r1):
-        if debug:
-            print("1")
-            sys.stdin.readline()
         return False
 
     if above_in_the_way(rooms, aux, r0, r1):
-        if debug:
-            print("2")
-            sys.stdin.readline()
         return False
 
     path = room_to_aux_paths[r0][aux_i]
     for i in path:
         if i != aux_i and aux[i] != None:
-            if debug:
-                print("3")
-                sys.stdin.readline()
             return False
-    if debug:
-        print("yep")
-        sys.stdin.readline()
     return True
+
 
 def in_the_way_in_room(rooms, aux, r0, r1, aux_i):
     for i in range(0, r1):
         if rooms[r0][i] != None:
             return True
     return False
+
 
 def room_contains_other_type(rooms, aux, r0, r1, aux_i):
     shell = aux[aux_i]
@@ -213,11 +195,13 @@ def room_contains_other_type(rooms, aux, r0, r1, aux_i):
             return True
     return False
 
+
 def below_are_empty(rooms, aux, r0, r1, aux_i):
     for i in range(r1 + 1, 4):
         if rooms[r0][i] == None:
             return True
     return False
+
 
 def can_move_to_room(rooms, aux, r0, r1, aux_i):
     shell = aux[aux_i]
@@ -226,8 +210,6 @@ def can_move_to_room(rooms, aux, r0, r1, aux_i):
     in_the_way = in_the_way_in_room(rooms, aux, r0, r1, aux_i)
     contains_other_type = room_contains_other_type(rooms, aux, r0, r1, aux_i)
     below_empty = below_are_empty(rooms, aux, r0, r1, aux_i)
-    if 'interactive' in rooms:
-        print(wrong_room , not_empty , in_the_way , contains_other_type , below_empty)
     if wrong_room or not_empty or in_the_way or contains_other_type or below_empty:
         return False
 
@@ -308,23 +290,12 @@ def move(rooms, aux):
         return 0
     min_cost = not_found
 
-    if False and rooms[1][1] == 'C' and aux[3] == 'C' and aux[1] == 'A' and rooms[0][0] == 'B'  and aux[-2] == 'B' and aux[-1] == 'D' and aux[0] == 'A':
-        rooms['interactive'] = True
-
-    if 'interactive' in rooms:
-        print_rooms(rooms, aux)
-        sys.stdin.readline()
-
     for i, shell in enumerate(aux):
         if shell != None:
             for r0 in range(0, 4):
                 for r1 in range(0, 4):
-                    if 'interactive' in rooms and r0 == 2 and r1 == 2 and i == 3:
-                        print('can_move_to_room? ' 'r0',r0, 'r1',r1, 'i', i, 'res:', can_move_to_room(rooms, aux, r0, r1, i))
                     if can_move_to_room(rooms, aux, r0, r1, i):
 
-                        if 'interactive' in rooms:
-                            print('move from {} to room {},{}'.format(i, r0, r1))
                         move_cost = aux_to_room_cost(rooms, aux, r0, r1, i)
                         rooms[r0][r1] = aux[i]
                         aux[i] = None
@@ -342,8 +313,6 @@ def move(rooms, aux):
             if rooms[r0][r1] != None:
                 for ti, aux_shell in enumerate(aux):
                     if can_move_to_aux(rooms, aux, r0, r1, ti):
-                        if 'interactive' in rooms:
-                            print('move from {},{} to aux {}'.format(r0, r1, ti))
                         move_cost = room_to_aux_cost(rooms, aux, r0, r1, ti)
                         aux[ti] = rooms[r0][r1]
                         rooms[r0][r1] = None
@@ -363,16 +332,9 @@ def part2(filename):
     rooms, aux = get_input(filename)
     return move(rooms, aux)
 
-# should be 44169
-#print(part2("test2.txt"))
-print(part2("input2.txt"))
 
-# result1 = part1("input.txt")
-# assert result1 == 653798
-# print("Part 1: {}".format(result1))
-
-# assert part2('input_small.txt') == 653798
-# assert part2('test13.txt') == 2758514936282235
-# result2 = part2('input.txt')
-# assert result2 == 1257350313518866
-# print("Part 2: {}".format(result2))
+part2("test2.txt") == 44169
+cache = {}
+result2 = part2('input2.txt')
+assert result2 == 47234
+print("Part 2: {}".format(result2))

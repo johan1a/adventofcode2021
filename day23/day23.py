@@ -223,26 +223,27 @@ def print_rooms(rooms, aux):
     print("#  ")
     print('  #########')
 
+
 cache = {}
+
 
 def tokenize(rooms, aux):
     token = []
-    for r0 in range(0,4):
-        for r1 in range(0,2):
+    for r0 in range(0, 4):
+        for r1 in range(0, 2):
             token.append(format(rooms[r0][r1]))
     for a in aux:
         token.append(format(a))
     return "".join(token)
 
+
 def move(rooms, aux):
     token = tokenize(rooms, aux)
     if token in cache:
         return cache[token]
-    #print_rooms(rooms, aux)
     if completed(rooms):
         cache[token] = 0
         return 0
-#    sys.stdin.readline()
     min_cost = not_found
 
     for i, shell in enumerate(aux):
@@ -250,7 +251,6 @@ def move(rooms, aux):
             for r0 in range(0, 4):
                 for r1 in range(0, 2):
                     if can_move_to_room(rooms, aux, r0, r1, i):
-                        #print("from aux {} to room {},{}".format(i, r0, r1))
                         move_cost = aux_to_room_cost(rooms, aux, r0, r1, i)
                         rooms[r0][r1] = aux[i]
                         aux[i] = None
@@ -267,12 +267,7 @@ def move(rooms, aux):
         for r1 in range(0, 2):
             if rooms[r0][r1] != None:
                 for ti, aux_shell in enumerate(aux):
-                    # if r0 == 3 and r1 == 0:
-                    #     print(rooms[r0][r1], ti, 'can move?',
-                    #           can_move_to_aux(rooms, aux, r0, r1, ti))
-                    #     print_rooms(rooms, aux)
                     if can_move_to_aux(rooms, aux, r0, r1, ti):
-                        #print("from room {},{} to aux {}".format(r0, r1, ti))
                         move_cost = room_to_aux_cost(rooms, aux, r0, r1, ti)
                         aux[ti] = rooms[r0][r1]
                         rooms[r0][r1] = None
@@ -293,13 +288,8 @@ def part1(filename):
     return move(rooms, aux)
 
 
-print(part1("input.txt"))
-# result1 = part1("input.txt")
-# assert result1 == 653798
-# print("Part 1: {}".format(result1))
-
-# assert part2('input_small.txt') == 653798
-# assert part2('test13.txt') == 2758514936282235
-# result2 = part2('input.txt')
-# assert result2 == 1257350313518866
-# print("Part 2: {}".format(result2))
+assert part1("test.txt") == 12521
+cache = {}
+result1 = part1("input.txt")
+print("Part 1: {}".format(result1))
+assert result1 == 17120

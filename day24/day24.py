@@ -37,10 +37,12 @@ def get_input(filename):
 
     return instructions
 
+
 def register(a):
-    if a in ['x','y', 'z', 'w']:
+    if a in ['x', 'y', 'z', 'w']:
         return True
     return False
+
 
 def execute(registers, cmd, input_data, interactive=False):
     op = cmd['op']
@@ -75,7 +77,7 @@ def execute(registers, cmd, input_data, interactive=False):
             bval = registers[b]
         else:
             bval = int(b)
-        if bval <=0 or registers[cmd['a']] < 0:
+        if bval <= 0 or registers[cmd['a']] < 0:
             return registers, False
         registers[cmd['a']] = registers[cmd['a']] % bval
     elif op == 'eql':
@@ -88,22 +90,24 @@ def execute(registers, cmd, input_data, interactive=False):
             registers[cmd['a']] = 1
         else:
             registers[cmd['a']] = 0
-    # print(input_data)
-    # pp.pprint(registers)
-    if interactive and op == 'inp':
-        print(cmd)
-        pp.pprint(registers)
-        sys.stdin.readline()
+    if interactive:
+        pass
+        # print(cmd)
+        # pp.pprint(registers)
+        # sys.stdin.readline()
     if registers[cmd['a']] < 0:
         return False
     else:
         return True
 
 
-def run(filename, input_raw, interactive=False, cmds=None):
-    if cmds == None:
-        cmds = get_input(filename)
+def run_file(filename, input_raw, interactive=False):
+    cmds = get_input(filename)
     registers = {'x': 0, 'y': 0, 'z': 0, 'w': 0}
+    return run(input_raw, interactive, cmds, registers)
+
+
+def run(input_raw, interactive, cmds, registers):
     input_data = [int(x) for x in str(input_raw)]
     input_data.reverse()
     for cmd in cmds:
@@ -117,8 +121,8 @@ def part1(filename, interactive=False):
     cmds = get_input(filename)
     i = 99999916280000
     while i >= 0:
-        if i % 10000 == 0:
-            print(i)
+        # if i % 10000 == 0:
+        #     print(i)
         if '0' not in str(i):
             regs, result = run(filename, i, interactive, cmds)
             if result and regs['z'] == 0:
@@ -127,11 +131,75 @@ def part1(filename, interactive=False):
     return -1
 
 
-assert run('test0.txt', 5)[0]['x'] == -5
-assert run('test1.txt', 13)[0]['z'] == 1
-assert run('test1.txt', 23)[0]['z'] == 0
-assert run('test1.txt', 43)[0]['z'] == 0
-assert run('test2.txt', 7) == ({'x': 1, 'y': 1, 'z': 1, 'w': 0}, True)
+cache = {}
 
-#print(part1("input.txt"))
-print(run("input.txt", 15199999999999, True))
+
+def tokenize(ci0, regs, i):
+    return (ci0, i, regs['w'], regs['x'], regs['y'], regs['z'])
+
+
+def find_digits(chunks, ci0, input_regs):
+    chunk = chunks[ci0]
+    i = 9
+    while i > 0:
+        token = tokenize(ci0, input_regs, i)
+        digits = None
+        ok = False
+        if token in cache:
+            return cache[token]
+        else:
+            input_copy = {
+                'x': input_regs['x'],
+                'y': input_regs['y'],
+                'z': input_regs['z'],
+                'w': input_regs['w'],
+            }
+            out_regs, ok = run(str(i), False, chunk, input_copy)
+            if ci0 == 13 and out_regs['z'] == 0:
+                print('interactive', ci0, i, input_regs, out_regs, ok)
+                # out2, ok2 = run(str(i), True, chunk, input_regs)
+                # print('after interactive', input_regs, out2, ok2, ci0, i)
+
+        if ok and ci0 == len(chunks) - 1 and out_regs['z'] == 0:
+            cache[token] = str(i)
+            return str(i)
+
+        elif ok and ci0 < len(chunks) - 1:
+            digits = find_digits(chunks, ci0 + 1, out_regs)
+            if digits != None:
+                cache[token] = str(i) + digits
+                return str(i) + digits
+            else:
+                cache[token] = None
+        elif not ok:
+            cache[token] = None
+
+        i -= 1
+    return None
+
+
+def part11(filename):
+    cmds = get_input(filename)
+    chunks = []
+    chunk = [cmds[0]]
+    i = 1
+    while i < len(cmds):
+        if cmds[i]['op'] == 'inp':
+            chunks.append(chunk)
+            chunk = []
+        chunk.append(cmds[i])
+        i += 1
+    chunks.append(chunk)
+
+    return find_digits(chunks, 0, {'x': 0, 'y': 0, 'z': 0, 'w': 0})
+
+
+assert run_file('test0.txt', 5)[0]['x'] == -5
+assert run_file('test1.txt', 13)[0]['z'] == 1
+assert run_file('test1.txt', 23)[0]['z'] == 0
+assert run_file('test1.txt', 43)[0]['z'] == 0
+assert run_file('test2.txt', 7) == ({'x': 1, 'y': 1, 'z': 1, 'w': 0}, True)
+
+print(part11("input.txt"))
+#print(run("input.txt", 99999899999959, False))
+print(run("last.txt", 9, True))

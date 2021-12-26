@@ -44,7 +44,7 @@ def register(a):
     return False
 
 
-def execute(registers, cmd, input_data, interactive=False):
+def execute(registers, cmd, input_data):
     op = cmd['op']
     if op == 'inp':
         registers[cmd['a']] = int(input_data.pop())
@@ -90,45 +90,26 @@ def execute(registers, cmd, input_data, interactive=False):
             registers[cmd['a']] = 1
         else:
             registers[cmd['a']] = 0
-    if interactive:
-        pass
-        # print(cmd)
-        # pp.pprint(registers)
-        # sys.stdin.readline()
     if registers[cmd['a']] < 0:
         return False
     else:
         return True
 
 
-def run_file(filename, input_raw, interactive=False):
+def run_file(filename, input_raw):
     cmds = get_input(filename)
     registers = {'x': 0, 'y': 0, 'z': 0, 'w': 0}
-    return run(input_raw, interactive, cmds, registers)
+    return run(input_raw, cmds, registers)
 
 
-def run(input_raw, interactive, cmds, registers):
+def run(input_raw, cmds, registers):
     input_data = [int(x) for x in str(input_raw)]
     input_data.reverse()
     for cmd in cmds:
-        result = execute(registers, cmd, input_data, interactive)
+        result = execute(registers, cmd, input_data)
         if not result:
             return registers, False
     return registers, True
-
-
-def part1(filename, interactive=False):
-    cmds = get_input(filename)
-    i = 99999916280000
-    while i >= 0:
-        # if i % 10000 == 0:
-        #     print(i)
-        if '0' not in str(i):
-            regs, result = run(filename, i, interactive, cmds)
-            if result and regs['z'] == 0:
-                return i
-        i = i - 1
-    return -1
 
 
 cache = {}
@@ -138,10 +119,10 @@ def tokenize(ci0, regs, i):
     return (ci0, i, regs['w'], regs['x'], regs['y'], regs['z'])
 
 
-def find_digits(chunks, ci0, input_regs):
+def find_digits(chunks, ci0, input_regs, istart, iend, idiff):
     chunk = chunks[ci0]
-    i = 1
-    while i < 10:
+    i = istart
+    while i != iend:
         token = tokenize(ci0, input_regs, i)
         digits = None
         ok = False
@@ -154,18 +135,15 @@ def find_digits(chunks, ci0, input_regs):
                 'z': input_regs['z'],
                 'w': input_regs['w'],
             }
-            out_regs, ok = run(str(i), False, chunk, input_copy)
-            if ci0 == 13 and out_regs['z'] == 0:
-                print('interactive', ci0, i, input_regs, out_regs, ok)
-                # out2, ok2 = run(str(i), True, chunk, input_regs)
-                # print('after interactive', input_regs, out2, ok2, ci0, i)
+            out_regs, ok = run(str(i), chunk, input_copy)
 
         if ok and ci0 == len(chunks) - 1 and out_regs['z'] == 0:
             cache[token] = str(i)
             return str(i)
 
         elif ok and ci0 < len(chunks) - 1:
-            digits = find_digits(chunks, ci0 + 1, out_regs)
+            digits = find_digits(chunks, ci0 + 1, out_regs, istart, iend,
+                                 idiff)
             if digits != None:
                 cache[token] = str(i) + digits
                 return str(i) + digits
@@ -174,11 +152,11 @@ def find_digits(chunks, ci0, input_regs):
         elif not ok:
             cache[token] = None
 
-        i += 1
+        i += idiff
     return None
 
 
-def part11(filename):
+def search(filename, istart, iend, idiff):
     cmds = get_input(filename)
     chunks = []
     chunk = [cmds[0]]
@@ -191,7 +169,20 @@ def part11(filename):
         i += 1
     chunks.append(chunk)
 
-    return find_digits(chunks, 0, {'x': 0, 'y': 0, 'z': 0, 'w': 0})
+    return find_digits(chunks, 0, {
+        'x': 0,
+        'y': 0,
+        'z': 0,
+        'w': 0
+    }, istart, iend, idiff)
+
+
+def part1(filename):
+    return search(filename, 9, 1, -1)
+
+
+def part2(filename):
+    return search(filename, 1, 9, 1)
 
 
 assert run_file('test0.txt', 5)[0]['x'] == -5
@@ -200,6 +191,9 @@ assert run_file('test1.txt', 23)[0]['z'] == 0
 assert run_file('test1.txt', 43)[0]['z'] == 0
 assert run_file('test2.txt', 7) == ({'x': 1, 'y': 1, 'z': 1, 'w': 0}, True)
 
-print(part11("input.txt"))
-#print(run("input.txt", 99999899999959, False))
-print(run("last.txt", 9, True))
+# Takes ~100 mins
+result1 = part1("input.txt")
+print("Part 1: {}".format(result1))
+
+result2 = part2("input.txt")
+print("Part 2: {}".format(result2))

@@ -140,8 +140,8 @@ def tokenize(ci0, regs, i):
 
 def find_digits(chunks, ci0, input_regs):
     chunk = chunks[ci0]
-    i = 9
-    while i > 0:
+    i = 1
+    while i < 10:
         token = tokenize(ci0, input_regs, i)
         digits = None
         ok = False
@@ -174,7 +174,7 @@ def find_digits(chunks, ci0, input_regs):
         elif not ok:
             cache[token] = None
 
-        i -= 1
+        i += 1
     return None
 
 
